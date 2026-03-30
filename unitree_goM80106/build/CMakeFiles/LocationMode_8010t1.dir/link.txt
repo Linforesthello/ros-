@@ -1,0 +1,1 @@
+/usr/bin/c++  -O3 -rdynamic CMakeFiles/LocationMode_8010t1.dir/src/LocationMode_8010t1.cpp.o -o LocationMode_8010t1   -L/home/lin/Lin_workspace/unitree_goM80106/lib  -Wl,-rpath,/home/lin/Lin_workspace/unitree_goM80106/lib -lUnitreeMotorSDK_Linux64 

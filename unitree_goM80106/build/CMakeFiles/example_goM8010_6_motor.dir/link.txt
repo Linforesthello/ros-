@@ -1,0 +1,1 @@
+/usr/bin/c++  -O3 -rdynamic CMakeFiles/example_goM8010_6_motor.dir/src/example_goM8010_6_motor.cpp.o -o example_goM8010_6_motor   -L/home/lin/Lin_workspace/unitree_goM80106/lib  -Wl,-rpath,/home/lin/Lin_workspace/unitree_goM80106/lib -lUnitreeMotorSDK_Linux64 
