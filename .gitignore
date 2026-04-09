@@ -1,0 +1,43 @@
+# General Python ignores
+__pycache__/
+*.py[cod]
+*.egg-info/
+.env
+
+# ROS 2 workspace specific build artifacts
+# These paths are specific to your project structure
+/6_Mpu6050t1_ws/build/
+/6_Mpu6050t1_ws/install/
+/6_Mpu6050t1_ws/log/
+
+# unitree_goM80106 project: only keep the src directory
+/unitree_goM80106/build/
+/unitree_goM80106/include/
+/unitree_goM80106/lib/
+# /unitree_goM80106/CMakeLists.txt
+/unitree_goM80106/build/
+
+# vision 
+/vision/other/
+
+# General build folders (for other potential projects)
+build/
+install/
+devel/
+log/
+
+# Compiled files
+*.o
+*.a
+*.so
+# Example of how to keep a specific library file
+# !unitree_goM80106/lib/*.so
+
+# IDE folders
+.idea/
+.vscode/
+# Keep shared VSCode settings for collaboration
+!/.vscode/settings.json
+!/.vscode/c_cpp_properties.json
+!/.vscode/launch.json
+!/.vscode/tasks.json
