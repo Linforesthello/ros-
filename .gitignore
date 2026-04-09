@@ -12,10 +12,9 @@ __pycache__/
 
 # unitree_goM80106 project: only keep the src directory
 /unitree_goM80106/build/
-/unitree_goM80106/include/
-/unitree_goM80106/lib/
+# /unitree_goM80106/include/
+# /unitree_goM80106/lib/
 # /unitree_goM80106/CMakeLists.txt
-/unitree_goM80106/build/
 
 # vision 
 # /vision/other/
