@@ -18,7 +18,7 @@ __pycache__/
 /unitree_goM80106/build/
 
 # vision 
-/vision/other/
+# /vision/other/
 
 # General build folders (for other potential projects)
 build/

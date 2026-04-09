@@ -597,3 +597,16 @@ lin@lin-virtual-machine:~/Lin_workspace$ git push
 使用 8 个线程进行压缩
 压缩对象中: 100% (205/205), 完成.
 写入对象中:  17% (40/231), 1.87 MiB | 78.00 KiB/s 
+
+### 成了？
+lin@lin-virtual-machine:~/Lin_workspace$ git push
+枚举对象中: 44, 完成.
+对象计数中: 100% (44/44), 完成.
+使用 8 个线程进行压缩
+压缩对象中: 100% (29/29), 完成.
+写入对象中: 100% (32/32), 18.83 KiB | 2.35 MiB/s, 完成.
+总共 32（差异 10），复用 0（差异 0），包复用 0
+remote: Resolving deltas: 100% (10/10), completed with 8 local objects.
+To https://github.com/Linforesthello/ros-.git
+   d11abb8..49c261d  master -> master
+lin@lin-virtual-machine:~/Lin_workspace$ 
