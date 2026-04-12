@@ -1122,3 +1122,251 @@ printf("%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld\r\n",
 
 
 #### 成功！
+
+### 目前的数据反馈
+---
+header:
+  stamp:
+    sec: 1775816519
+    nanosec: 586847856
+  frame_id: imu_link
+orientation:
+  x: 0.0
+  y: 0.0
+  z: 0.04
+  w: 0.99
+orientation_covariance:
+- 0.01
+- 0.0
+- 0.0
+- 0.0
+- 0.01
+- 0.0
+- 0.0
+- 0.0
+- 0.01
+angular_velocity:
+  x: 0.0
+  y: 0.0
+  z: 0.0
+angular_velocity_covariance:
+- 0.01
+- 0.0
+- 0.0
+- 0.0
+- 0.01
+- 0.0
+- 0.0
+- 0.0
+- 0.01
+linear_acceleration:
+  x: -0.02
+  y: 0.0
+  z: 9.91
+linear_acceleration_covariance:
+- 0.01
+- 0.0
+- 0.0
+- 0.0
+- 0.01
+- 0.0
+- 0.0
+- 0.0
+- 0.01
+---
+header:
+  stamp:
+    sec: 1775816519
+    nanosec: 601444226
+  frame_id: imu_link
+orientation:
+  x: 0.0
+  y: 0.0
+  z: 0.04
+  w: 0.99
+orientation_covariance:
+- 0.01
+- 0.0
+- 0.0
+- 0.0
+- 0.01
+- 0.0
+- 0.0
+- 0.0
+- 0.01
+angular_velocity:
+  x: 0.0
+  y: 0.0
+  z: 0.0
+angular_velocity_covariance:
+- 0.01
+- 0.0
+- 0.0
+- 0.0
+- 0.01
+- 0.0
+- 0.0
+- 0.0
+- 0.01
+linear_acceleration:
+  x: 0.02
+  y: 0.0
+  z: 9.84
+linear_acceleration_covariance:
+- 0.01
+- 0.0
+- 0.0
+- 0.0
+- 0.01
+- 0.0
+- 0.0
+- 0.0
+- 0.01
+---
+header:
+  stamp:
+    sec: 1775816519
+    nanosec: 613339944
+  frame_id: imu_link
+orientation:
+  x: 0.0
+  y: 0.0
+  z: 0.04
+  w: 0.99
+orientation_covariance:
+- 0.01
+- 0.0
+- 0.0
+- 0.0
+- 0.01
+- 0.0
+- 0.0
+- 0.0
+- 0.01
+angular_velocity:
+  x: 0.0
+  y: 0.0
+  z: 0.0
+angular_velocity_covariance:
+- 0.01
+- 0.0
+- 0.0
+- 0.0
+- 0.01
+- 0.0
+- 0.0
+- 0.0
+- 0.01
+linear_acceleration:
+  x: -0.03
+  y: -0.01
+  z: 9.95
+linear_acceleration_covariance:
+- 0.01
+- 0.0
+- 0.0
+- 0.0
+- 0.01
+- 0.0
+- 0.0
+- 0.0
+- 0.01
+---
+header:
+  stamp:
+    sec: 1775816519
+    nanosec: 631482668
+  frame_id: imu_link
+orientation:
+  x: 0.0
+  y: 0.0
+  z: 0.04
+  w: 0.99
+orientation_covariance:
+- 0.01
+- 0.0
+- 0.0
+- 0.0
+- 0.01
+- 0.0
+- 0.0
+- 0.0
+- 0.01
+angular_velocity:
+  x: 0.0
+  y: 0.0
+  z: 0.0
+angular_velocity_covariance:
+- 0.01
+- 0.0
+- 0.0
+- 0.0
+- 0.01
+- 0.0
+- 0.0
+- 0.0
+- 0.01
+linear_acceleration:
+  x: 0.01
+  y: 0.04
+  z: 9.92
+linear_acceleration_covariance:
+- 0.01
+- 0.0
+- 0.0
+- 0.0
+- 0.01
+- 0.0
+- 0.0
+- 0.0
+- 0.01
+---
+header:
+  stamp:
+    sec: 1775816519
+    nanosec: 642282284
+  frame_id: imu_link
+orientation:
+  x: 0.0
+  y: 0.0
+  z: 0.04
+  w: 0.99
+orientation_covariance:
+- 0.01
+- 0.0
+- 0.0
+- 0.0
+- 0.01
+- 0.0
+- 0.0
+- 0.0
+- 0.01
+angular_velocity:
+  x: 0.0
+  y: 0.0
+  z: 0.0
+angular_velocity_covariance:
+- 0.01
+- 0.0
+- 0.0
+- 0.0
+- 0.01
+- 0.0
+- 0.0
+- 0.0
+- 0.01
+linear_acceleration:
+  x: 0.03
+  y: 0.07
+  z: 9.8
+linear_acceleration_covariance:
+- 0.01
+- 0.0
+- 0.0
+- 0.0
+- 0.01
+- 0.0
+- 0.0
+- 0.0
+- 0.01
+---

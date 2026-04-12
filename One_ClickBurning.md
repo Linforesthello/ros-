@@ -1,0 +1,32 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+        "label": "Build",
+        "type": "shell",
+        "command": "cmake --build ${workspaceFolder}/build/Debug",
+        "problemMatcher": []
+    },
+    {
+      "label": "Flash STM32 via J-Link",
+      "type": "process",
+      "command": "/opt/SEGGER/JLink/JLinkExe",
+      "args": [
+        "-Device", "STM32F103C8",
+        "-If", "SWD",
+        "-Speed", "4000",
+        "-CommanderScript", "${workspaceFolder}/flash.jlink"
+      ],
+      "group": { "kind": "build", "isDefault": true },
+      "problemMatcher": [],
+      "dependsOn": "Build"
+    }
+  ]
+}
+
+
+r
+h
+loadfile build/Debug/6_LEDpc13_LinuxCmakeTest.elf
+r
+q

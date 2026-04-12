@@ -77,7 +77,7 @@ class ImuNode(Node):
         msg.orientation.y = data[2] / 100.0
         msg.orientation.z = data[3] / 100.0
 
-        # 加速度
+        # 线加速度
         msg.linear_acceleration.x = data[4] / 100.0
         msg.linear_acceleration.y = data[5] / 100.0
         msg.linear_acceleration.z = data[6] / 100.0
@@ -87,10 +87,10 @@ class ImuNode(Node):
         msg.angular_velocity.y = data[8] / 100.0
         msg.angular_velocity.z = data[9] / 100.0
 
-        # covariance
-        # msg.orientation_covariance[0] = -1
-        # msg.angular_velocity_covariance[0] = -1
-        # msg.linear_acceleration_covariance[0] = -1
+        # 协方差 (置-1表示未知)
+        msg.orientation_covariance[0] = -1.0
+        msg.angular_velocity_covariance[0] = -1.0
+        msg.linear_acceleration_covariance[0] = -1.0
 
         self.pub.publish(msg)
 
