@@ -36,19 +36,20 @@ mask = cv2.inRange(hsv_image, self.hsv_lower, self.hsv_upper)
 # 黄色范围
 self.yellow_lower = np.array([20, 100, 100])
 self.yellow_upper = np.array([35, 255, 255])
-# 蓝色范围
-self.blue_lower = np.array([100, 100, 50])
+# 蓝色范围（S 下界由 100 → 50，覆盖阴影/边缘蓝色）
+self.blue_lower = np.array([100, 50, 50])
 self.blue_upper = np.array([130, 255, 255])
 ...
 mask_yellow = cv2.inRange(hsv_image, self.yellow_lower, self.yellow_upper)
 mask_blue   = cv2.inRange(hsv_image, self.blue_lower,   self.blue_upper)
-mask = cv2.bitwise_or(mask_yellow, mask_blue)  # 含黄或蓝均视为球
+# 各自单独形态学处理后传入密度聚类，不再提前合并
 ```
 
 **取值依据：**
 - 黄色 H=20~35：纯黄核心区，避开橙色(H<20)和绿色(H>40)
-- 蓝色 H=100~130：标准深蓝/天蓝，V≥50 以保留阴影侧蓝色
-- S≥100：排除白色/灰色背景干扰
+- 蓝色 H=100~130：标准深蓝/天蓝
+- 蓝色 S≥50（原 100）：原阈值过高，球体边缘/阴影侧饱和度常落在 50~100，导致蓝色像素严重丢失
+- 黄色 S≥100：黄色背景噪声多，保持较高阈值排除干扰
 
 ---
 
@@ -270,7 +271,7 @@ self.landing_pub = self.create_publisher(PointStamped, '/predicted_landing', 10)
 |--------|--------|------|
 | `yellow_lower` | `[20, 100, 100]` | 黄色 HSV 下界 |
 | `yellow_upper` | `[35, 255, 255]` | 黄色 HSV 上界 |
-| `blue_lower` | `[100, 100, 50]` | 蓝色 HSV 下界 |
+| `blue_lower` | `[100, 50, 50]` | 蓝色 HSV 下界 |
 | `blue_upper` | `[130, 255, 255]` | 蓝色 HSV 上界 |
 | `ball_diameter_m` | `0.24` | 球体直径 (m) |
 | `ball_radius_m` | `0.12` | 球体半径 (m) |
@@ -281,6 +282,39 @@ self.landing_pub = self.create_publisher(PointStamped, '/predicted_landing', 10)
 | `img_scale` | `0.5` | 图像处理缩放比例（降采样 50%） |
 | `trajectory_points` | `deque(maxlen=30)` | 轨迹滑动窗口，自动维护最近 30 帧 |
 | `camera_height_m` | 待设定 | 相机安装高度，用于水平面落点计算 |
+
+---
+
+## 六、已知问题与修复记录
+
+### 🐛 Bug 1 — 蓝色区域不被识别（已修复）
+
+**现象：** 节点运行时画面只追踪黄色半球，蓝色半球无法贡献定位。
+
+**根因（两层叠加）：**
+
+| 层 | 位置 | 问题 |
+|----|------|------|
+| 1（主因） | `blue_lower` S=100 | 球体边缘/阴影侧蓝色像素饱和度 S 常落在 50~100，阈值过高导致大量蓝色前景像素丢失 |
+| 2（放大） | `_detect_by_density` 原为合并掩码 | 单峰算法下黄色像素数远多于蓝色时，密度峰值始终落在黄色区，蓝色贡献被完全压制 |
+
+**修复：**
+
+1. **放宽蓝色 S 下界**：`[100, 100, 50]` → `[100, 50, 50]`
+
+2. **密度法改为双通道分峰**：黄蓝掩码分别建密度图、各自找峰值，以各自总像素数加权平均得到最终球心：
+
+```python
+# image_callback：各色掩码单独形态学处理（不提前合并）
+mask_yellow = cv2.erode/dilate(mask_yellow, ...)
+mask_blue   = cv2.erode/dilate(mask_blue, ...)
+
+# _detect_by_density 内部：
+cx_final = (cx_yellow * n_yellow + cx_blue * n_blue) / (n_yellow + n_blue)
+cy_final = (cy_yellow * n_yellow + cy_blue * n_blue) / (n_yellow + n_blue)
+```
+
+**效果：** 两种颜色均有效参与定位；当球体转动使一侧朝向相机时，优势颜色权重自动提升，定位更鲁棒。
 
 ---
 
