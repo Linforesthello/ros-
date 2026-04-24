@@ -10,8 +10,8 @@ int main() {
   MotorData   data;
 
   const float gearRatio  = -6.33*queryGearRatio(MotorType::GO_M8010_6);
-  const float targetPos  = 20.0f * gearRatio;  // 输出端 3.14 rad -> 电机轴
-  const float stepSize   = 0.15f;             // 每次最大步进（rad，电机轴），安全缓变
+  const float targetPos  = 23.0f * gearRatio;  // 输出端 3.14 rad -> 电机轴
+  const float stepSize   = 0.65f;             // 每次最大步进（rad，电机轴），安全缓变
 
   // 先读一次当前位置，避免启动时从 0 出发导致突然反转
   cmd.motorType = MotorType::GO_M8010_6;
