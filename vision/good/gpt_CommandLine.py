@@ -75,7 +75,7 @@ class BallDetectorNode(Node):
         # ── 网格密度聚类参数 ─────────────────────────────────
         self.grid_size          = 16   # 格子边长（像素，基于 img_scale=0.5 后分辨率）
         self.show_heatmap       = True # 是否叠加密度热力图（调试用，上线可关）
-        self.density_min_pixels = 20   # 峰值格子最低有效像素数，低于此视为无球
+        self.density_min_pixels = 10   # 峰值格子最低有效像素数；原20在4m处边界（约23px），降至10覆盖HSV波动
 
         self.ball_pub = self.create_publisher(PointStamped, 'detected_ball', 10)
 
@@ -205,7 +205,7 @@ class BallDetectorNode(Node):
                 mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
             for cnt in contours:
                 area = cv2.contourArea(cnt)
-                if area < 80:          # 过滤噪声小块（缩放后坐标系）
+                if area < 40:          # 过滤噪声小块；原80在4m处会误拒单色面积约76px²，降至40保留
                     continue
                 M = cv2.moments(cnt)
                 if M['m00'] == 0:
@@ -402,15 +402,9 @@ class BallDetectorNode(Node):
                         cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 200, 255), 2)
 
         elif self.prior_state == 'tracking':
-            # 追踪阶段：只保留目标颜色对应的掩码，抑制同场景其他颜色干扰
-            if self.target_color == 'yellow':
-                mask_blue = np.zeros_like(mask_blue)
-            elif self.target_color == 'blue':
-                mask_yellow = np.zeros_like(mask_yellow)
-
-            # 重新用过滤后的掩码检测
-            found, center_x, center_y, radius, draw_radius, norm_density = \
-                self._detect_by_density(mask_yellow, mask_blue, self.grid_size)
+            # 追踪阶段：直接复用顶部已做的双色密度检测结果（found/center_x/center_y/radius）
+            # 黄蓝掩码全部保留：目标球本身就是黄蓝两色，场景干扰由先验位置+深度双门限过滤
+            pass  # found/center_x/center_y/radius/draw_radius 已在上方第372行赋值
 
             if found and draw_radius > 5:
                 # ── 先验门限双阈值过滤 ──────────────────────────────
