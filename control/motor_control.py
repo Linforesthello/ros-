@@ -3,6 +3,7 @@ import serial
 import curses
 import time
 import glob
+import threading
 
 # 串口设置
 BAUD_RATE = 115200
@@ -28,7 +29,20 @@ SERIAL_PORT = select_port()
 ser = serial.Serial(SERIAL_PORT, BAUD_RATE, timeout=1)
 print(f"已连接: {SERIAL_PORT}")
 
-def send_command(command_str, log_lines, log_win):
+def refresh_log(log_lines, log_win, lock):
+    """刷新日志子窗口（线程安全）"""
+    with lock:
+        log_win.erase()
+        h, w = log_win.getmaxyx()
+        visible = log_lines[-(h - 2):]
+        for i, line in enumerate(visible):
+            try:
+                log_win.addstr(i, 0, line[:w - 1])
+            except curses.error:
+                pass
+        log_win.refresh()
+
+def send_command(command_str, log_lines, log_win, lock):
     """通过串口发送命令（命令是十六进制字节流），并在日志窗口显示"""
     command_bytes = bytes.fromhex(command_str.replace(' ', ''))  # 转换为字节流
     ser.write(command_bytes)
@@ -36,17 +50,21 @@ def send_command(command_str, log_lines, log_win):
     # 记录发送日志
     timestamp = time.strftime('%H:%M:%S')
     log_lines.append(f"[{timestamp}] TX: {command_str.upper()}")
+    refresh_log(log_lines, log_win, lock)
 
-    # 刷新日志窗口
-    log_win.erase()
-    h, w = log_win.getmaxyx()
-    visible = log_lines[-(h - 2):]  # 只显示最新的几行
-    for i, line in enumerate(visible):
+def rx_reader(log_lines, log_win, lock, stop_event):
+    """后台线程：持续读取串口回调数据并显示到日志窗口"""
+    while not stop_event.is_set():
         try:
-            log_win.addstr(i, 0, line[:w - 1])
-        except curses.error:
-            pass
-    log_win.refresh()
+            if ser.in_waiting > 0:
+                data = ser.read(ser.in_waiting)
+                timestamp = time.strftime('%H:%M:%S')
+                text = data.decode('ascii', errors='replace').strip()
+                log_lines.append(f"[{timestamp}] RX: {text}")
+                refresh_log(log_lines, log_win, lock)
+        except serial.SerialException:
+            break
+        time.sleep(0.05)  # 50ms 轮询一次
 
 def main(stdscr):
     """主程序，处理键盘输入控制"""
@@ -85,6 +103,12 @@ def main(stdscr):
         ord('n'): 'AA 01 26 01 00 00 02 11 55',  # 右后轮-前进
         ord('b'): 'AA 01 26 01 00 00 02 11 00',  # 右后轮-动力停
         # (缺少: 左后、右前动力控制)
+
+        # 反馈测试
+        ord('t'): 'AA 01 23 02 00 00 01 01',
+        ord('y'): 'AA 01 24 02 00 00 01 01',
+        ord('u'): 'AA 01 25 02 00 00 01 01',
+        ord('i'): 'AA 01 26 02 00 00 01 01',
     }
 
     # 按键说明文字
@@ -94,7 +118,7 @@ def main(stdscr):
         " f/g: 左前转向  j/h: 右后转向",
         " c/v: 左前动力  n/b: 右后动力",
         "-" * 50,
-        "  发送日志:",
+        "  收发日志 (TX=发送 / RX=回调):",
     ]
 
     total_rows, total_cols = stdscr.getmaxyx()
@@ -112,18 +136,28 @@ def main(stdscr):
     log_rows = total_rows - help_rows
     log_win = curses.newwin(log_rows, total_cols, help_rows, 0)
     log_lines = []
+    lock = threading.Lock()
 
-    while True:
-        key = stdscr.getch()  # 获取按键, 由于 stdscr.timeout(100) 此处为非阻塞，超时返回-1
+    # 启动 RX 后台线程
+    stop_event = threading.Event()
+    rx_thread = threading.Thread(target=rx_reader, args=(log_lines, log_win, lock, stop_event), daemon=True)
+    rx_thread.start()
 
-        if key == ord('q'):  # 按 'q' 退出程序
-            break
+    try:
+        while True:
+            key = stdscr.getch()  # 获取按键, 由于 stdscr.timeout(100) 此处为非阻塞，超时返回-1
 
-        # 当检测到有效按键时，发送一次对应命令
-        # 这种模式适用于发送"开始"和"停止"类型的指令
-        # 如果按住一个键，系统会自动重复发送该键，从而实现连续控制
-        if key in commands:
-            send_command(commands[key], log_lines, log_win)
+            if key == ord('q'):  # 按 'q' 退出程序
+                break
+
+            # 当检测到有效按键时，发送一次对应命令
+            # 这种模式适用于发送"开始"和"停止"类型的指令
+            # 如果按住一个键，系统会自动重复发送该键，从而实现连续控制
+            if key in commands:
+                send_command(commands[key], log_lines, log_win, lock)
+    finally:
+        stop_event.set()
+        rx_thread.join(timeout=1)
 
 if __name__ == "__main__":
     curses.wrapper(main)
