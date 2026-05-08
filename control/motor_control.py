@@ -4,6 +4,7 @@ import curses
 import time
 import glob
 import threading
+import io
 
 # 串口设置
 BAUD_RATE = 115200
@@ -53,18 +54,28 @@ def send_command(command_str, log_lines, log_win, lock):
     refresh_log(log_lines, log_win, lock)
 
 def rx_reader(log_lines, log_win, lock, stop_event):
-    """后台线程：持续读取串口回调数据并显示到日志窗口"""
+    """后台线程：持续读取串口回调数据并显示到日志窗口（行缓冲，避免粘包错位）"""
+    buf = io.BytesIO()
     while not stop_event.is_set():
         try:
             if ser.in_waiting > 0:
                 data = ser.read(ser.in_waiting)
-                timestamp = time.strftime('%H:%M:%S')
-                text = data.decode('ascii', errors='replace').strip()
-                log_lines.append(f"[{timestamp}] RX: {text}")
-                refresh_log(log_lines, log_win, lock)
+                buf.write(data)
+                buf.seek(0)
+                content = buf.read()
+                lines = content.split(b'\n')
+                buf.seek(0)
+                buf.truncate()
+                buf.write(lines[-1])   # 不完整行存回
+                for line in lines[:-1]:
+                    text = line.decode('ascii', errors='replace').strip()
+                    if text:
+                        timestamp = time.strftime('%H:%M:%S')
+                        log_lines.append(f"[{timestamp}] RX: {text}")
+                        refresh_log(log_lines, log_win, lock)
         except serial.SerialException:
             break
-        time.sleep(0.05)  # 50ms 轮询一次
+        time.sleep(0.05)
 
 def main(stdscr):
     """主程序，处理键盘输入控制"""
