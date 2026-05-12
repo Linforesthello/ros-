@@ -16,11 +16,11 @@ endif()
 set(CMAKE_BUILD_RPATH "${CMAKE_SOURCE_DIR}/lib")
 
 
-add_executable(LocationMode_8010t1 src/LocationMode_8010t1.cpp)
-target_link_libraries(LocationMode_8010t1 ${EXTRA_LIBS})
+add_executable(locationMode_8010t1 src/locationMode_8010t1.cpp)
+target_link_libraries(locationMode_8010t1 ${EXTRA_LIBS})
 
-add_executable(StopMode_8010t1 src/StopMode_8010t1.cpp)
-target_link_libraries(StopMode_8010t1 ${EXTRA_LIBS})
+add_executable(stopMode_8010t1 src/stopMode_8010t1.cpp)
+target_link_libraries(stopMode_8010t1 ${EXTRA_LIBS})
 
 add_executable(example_goM8010_6_motor src/example_goM8010_6_motor.cpp)
 target_link_libraries(example_goM8010_6_motor ${EXTRA_LIBS})
