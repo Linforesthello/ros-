@@ -50,7 +50,8 @@ def send_command(command_str, log_lines, log_win, lock):
 
     # 记录发送日志
     timestamp = time.strftime('%H:%M:%S')
-    log_lines.append(f"[{timestamp}] TX: {command_str.upper()}")
+    with lock:
+        log_lines.append(f"[{timestamp}] TX: {command_str.upper()}")
     refresh_log(log_lines, log_win, lock)
 
 def rx_reader(log_lines, log_win, lock, stop_event):
@@ -97,7 +98,7 @@ def main(stdscr):
         ord('a'): 'AA 01 02 01 00 00 02 11 4B',  # 转向全体前进
         ord('z'): 'AA 01 02 01 00 00 02 11 00',  # 转向全体停
         # 0x103: 动力电机控制
-        ord('d'): 'AA 01 03 01 00 00 02 11 4B',  # 动力全体前进
+        ord('d'): 'AA 01 03 01 00 00 02 11 32',  # 动力全体前进
         ord('x'): 'AA 01 03 01 00 00 02 11 00',  # 动力全体停
 
         # --- 转向控制 (方向) ---
