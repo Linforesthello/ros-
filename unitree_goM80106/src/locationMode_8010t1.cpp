@@ -21,9 +21,14 @@ int main() {
 
   std::signal(SIGINT, signalHandler);
 
-  const float gearRatio  = -6.33*queryGearRatio(MotorType::GO_M8010_6);
-  const float targetPos  = 5.0f * gearRatio;  // 输出端 3.14 rad -> 电机轴
-  const float stepSize   = 0.70f;             // 每次最大步进（rad，电机轴），安全缓变
+  // 直接使用 queryGearRatio 返回的 6.33，不再额外乘 6.33，避免减速比重复计算
+  // const float gearRatio  = -6.33*queryGearRatio(MotorType::GO_M8010_6);
+
+  const float gearRatio  = -queryGearRatio(MotorType::GO_M8010_6);
+
+  const float targetDeg  = 0.0f;              // 输出端目标角度（度）
+  const float targetPos  = targetDeg * M_PI / 180.0f * gearRatio;  // 度→rad→电机轴位置
+  const float stepSize   = 0.10f;              // 每次最大步进（rad，电机轴），安全缓变
 
   // 先读一次当前位置，避免启动时从 0 出发导致突然反转
   cmd.motorType = MotorType::GO_M8010_6;
@@ -37,6 +42,8 @@ int main() {
   cmd.tau = 0;
   serial.sendRecv(&cmd, &data);
   float cmdPos = data.q;  // 从实际位置出发
+
+  
 
   while(running)
   {
@@ -58,7 +65,12 @@ int main() {
     serial.sendRecv(&cmd, &data);
 
     std::cout <<  std::endl;
+
+    std::cout << "queryGearRatio returned: " << queryGearRatio(MotorType::GO_M8010_6) << std::endl;
+    std::cout << "gearRatio: " << gearRatio << std::endl;
+
     std::cout << "motor.q: "      << data.q      << std::endl;
+    std::cout << "output(deg): "  << data.q / gearRatio * 180.0 / M_PI << std::endl;
     std::cout << "motor.temp: "   << data.temp   << std::endl;
     std::cout << "motor.dq: "     << data.dq     << std::endl;
     std::cout << "motor.merror: " << data.merror << std::endl;
