@@ -5,7 +5,7 @@
 
 int main() {
 
-  SerialPort  serial("/dev/ttyACM0");
+  SerialPort  serial("/dev/ttyACM1");
   MotorCmd    cmd;
   MotorData   data;
 
