@@ -15,7 +15,7 @@ void signalHandler(int) {
 
 int main() {
 
-  SerialPort  serial("/dev/ttyACM1");
+  SerialPort  serial("/dev/ttyACM0");
   MotorCmd    cmd;
   MotorData   data;
 
@@ -26,9 +26,9 @@ int main() {
 
   const float gearRatio  = -queryGearRatio(MotorType::GO_M8010_6);
 
-  const float targetDeg  = 0.0f;              // 输出端目标角度（度）
+  const float targetDeg  = 1000.0f;              // 输出端目标角度（度）
   const float targetPos  = targetDeg * M_PI / 180.0f * gearRatio;  // 度→rad→电机轴位置
-  const float stepSize   = 0.10f;              // 每次最大步进（rad，电机轴），安全缓变
+  const float stepSize   = 10.00f;              // 每次最大步进（rad，电机轴），安全缓变
 
   // 先读一次当前位置，避免启动时从 0 出发导致突然反转
   cmd.motorType = MotorType::GO_M8010_6;
