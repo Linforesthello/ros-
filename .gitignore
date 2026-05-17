@@ -27,5 +27,8 @@ devel/
 !/.vscode/tasks.json
 .marscode/
 
+# Embedded git repos (submodules handled separately)
+vlp16_slam_ws/src/kiss-icp/
+
 # Runtime state (machine-local)
 .can_counter.json
